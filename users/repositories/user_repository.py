@@ -47,6 +47,19 @@ class Database:
         conn.commit()
         conn.close()
 
+    def update_user(self, user: User):
+        conn = self._connect()
+        cursor = conn.cursor()
+        cursor.execute(
+            '''UPDATE users 
+            SET role=?, cuit=?, name=?, address=?, phone=?, mobile=?, contact=?, email=? 
+            WHERE username=?''', 
+            (user.role, user.cuit, user.name, user.address, user.phone, user.mobile, user.contact, user.email, user.username)
+        )
+        conn.commit()
+        conn.close()
+
+
     def delete_user(self, username):
         conn = self._connect()
         cursor = conn.cursor()

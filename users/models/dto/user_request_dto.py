@@ -1,8 +1,8 @@
 # users/dto/user_request_dto.py
 class UserRequestDto:
-    def __init__(self, username, password, role, cuit, name, address, phone, mobile, contact, email):
+    def __init__(self, username, role, cuit, name, address, phone, mobile, contact, email):
         self.username = username
-        self.password = password
+        
         self.role = role
         self.cuit = cuit
         self.name = name

@@ -3,7 +3,7 @@ from users.models.dto.user_dto import UserDTO
 from flask_jwt_extended import create_access_token
 import bcrypt
 
-class Auth:
+class AuthService:
     def __init__(self, db):
         self.db = db
 

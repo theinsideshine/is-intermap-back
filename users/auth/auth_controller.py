@@ -1,5 +1,5 @@
 from flask import Blueprint, current_app, request, jsonify
-from users.auth.auth_service import Auth
+from users.auth.auth_service import AuthService
 from users.repositories.user_repository import Database
 from users.models.dto.user_dto import UserDTO
 from users.schemas.user_schema import user_schema  # Importamos el esquema
@@ -20,7 +20,7 @@ def setup():
 
     global db, auth
     db = Database(db_path)
-    auth = Auth(db)
+    auth = AuthService(db)
 
 @bp.route('/register', methods=['POST'])
 def register():

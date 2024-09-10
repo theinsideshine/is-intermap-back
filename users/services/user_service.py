@@ -1,6 +1,8 @@
 from users.models.entities.user_entity import User
+from users.models.dto.user_dto import UserDTO
 from users.models.mappers.user_mapper import UserMapper
 from users.repositories.user_repository import Database
+import bcrypt
 
 class UserService:
     def __init__(self, db_path):
@@ -9,26 +11,30 @@ class UserService:
     def get_all_users(self):
         # Llamamos al método del repositorio para obtener todos los usuarios
         users = self.user_repository.get_all_users()
-        return [UserMapper.to_dto(user) for user in users]
+        return [UserMapper.EntityTo_UserResponseDto(user) for user in users]
 
-    def create_user(self, user_request_dto):
-        user = UserMapper.to_entity(user_request_dto)
+    def create_user(self, user_dto: UserDTO):
+        hashed_password = bcrypt.hashpw(user_dto.password.encode('utf-8'), bcrypt.gensalt())        
+        user = UserMapper.UserDtoTo_entity(user_dto)  
+        user.password =hashed_password.decode('utf-8')      
         self.user_repository.create_user(user)
-        return UserMapper.to_dto(user)
+        return UserMapper.EntityTo_UserResponseDto(user)
 
     def get_user(self, username):
         user = self.user_repository.get_user(username)
         if user:
-            return UserMapper.to_dto(user)
+            return UserMapper.EntityTo_UserResponseDto(user)
         return None
 
     def update_user(self, username, user_request_dto):
         user = self.user_repository.get_user(username)
         if user:
-            updated_user = UserMapper.to_entity(user_request_dto)
-            self.user_repository.create_user(updated_user)  # Usamos create_user para actualizar
-            return UserMapper.to_dto(updated_user)
+            # Pasamos el usuario existente para conservar la contraseña si no se proporciona una nueva
+            updated_user = UserMapper.UserRequestDtoTo_entity(user_request_dto, existing_user=user)
+            self.user_repository.update_user(updated_user)
+            return UserMapper.EntityTo_UserResponseDto(updated_user)
         return None
+
 
     def delete_user(self, username):
         user = self.user_repository.get_user(username)

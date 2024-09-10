@@ -30,7 +30,7 @@ try:
             phone TEXT,
             mobile TEXT,
             contact TEXT,
-            email TEXT
+            email TEXT NOT NULL UNIQUE
         )
     ''')
 

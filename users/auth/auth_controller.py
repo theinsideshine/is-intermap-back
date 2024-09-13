@@ -22,33 +22,6 @@ def setup():
     db = Database(db_path)
     auth = AuthService(db)
 
-@bp.route('/register', methods=['POST'])
-def register():
-    try:
-        # Validar los datos recibidos
-        data = user_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 400
-
-    username = data.get('username')
-    password = data.get('password')    
-    cuit = data.get('cuit')
-    name = data.get('name')
-    address = data.get('address')
-    phone = data.get('phone')
-    mobile = data.get('mobile')
-    contact = data.get('contact')
-    email = data.get('email')
-
-    # Forzar el rol a 'user'
-    role = 'user'
-
-    if auth.user_exists(username):
-        return jsonify({"error": "El usuario ya existe"}), 400
-    
-    if auth.email_exists(email):
-        return jsonify({"error": "El email ya existe"}), 400
-    
 
     user_dto = UserDTO(
         username=username,

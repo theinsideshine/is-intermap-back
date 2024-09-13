@@ -25,8 +25,9 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+#bp = Blueprint('intersection', __name__)
+bp = Blueprint('intersection', __name__, url_prefix='/maps')
 
-bp = Blueprint('intersection', __name__)
 
 # Ruta al archivo KML original
 KML_FILE_PATH = 'cables.kml'

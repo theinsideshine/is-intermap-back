@@ -44,7 +44,7 @@ def get_users():
 
 # Endpoint para crear un usuario
 @bp.route('/users', methods=['POST'])
-def register():
+def create():
     try:
         # Validar los datos recibidos
         data = user_schema.load(request.json)
@@ -52,38 +52,20 @@ def register():
         return jsonify(err.messages), 400
 
     username = data.get('username')
-    password = data.get('password')  
-    role = data.get('role')  
-    cuit = data.get('cuit')
-    name = data.get('name')
-    address = data.get('address')
-    phone = data.get('phone')
-    mobile = data.get('mobile')
-    contact = data.get('contact')
-    email = data.get('email')   
+    email = data.get('email')
 
     if auth.user_exists(username):
         return jsonify({"error": "El usuario ya existe"}), 400
     
     if auth.email_exists(email):
         return jsonify({"error": "El email ya existe"}), 400
-    
 
-    user_dto = UserDTO(
-        username=username,
-        password=password,
-        role=role,
-        cuit=cuit,
-        name=name,
-        address=address,
-        phone=phone,
-        mobile=mobile,
-        contact=contact,
-        email=email
-    )
+    # Crear el UserDTO usando el diccionario 'data'
+    user_dto = UserDTO(**data)
 
     auth.register_user(user_dto)
     return jsonify({"message": "Usuario registrado exitosamente"}), 201
+
 
 # Endpoint para obtener un usuario por su username
 @bp.route('/users/<username>', methods=['GET'])

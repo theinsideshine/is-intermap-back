@@ -20,3 +20,10 @@ def admin_super_data():
 @roles_required('admin')
 def admin_data():
     return jsonify({"data": "Información confidencial para admins"}), 200
+
+
+@bp.route('/superuser-data', methods=['GET'])
+@jwt_required()  # Asegúrate de que el JWT esté presente
+@roles_required('superuser')
+def superuser_data():
+    return jsonify({"data": "Información confidencial para superuser"}), 200

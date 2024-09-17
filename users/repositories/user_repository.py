@@ -11,17 +11,18 @@ class Database:
     def get_user(self, username):
         conn = self._connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT username, password, role, cuit, name, address, phone, mobile, contact, email FROM users WHERE username=?", (username,))
-        user = cursor.fetchone()
+        cursor.execute("SELECT id, username, password, role, cuit, name, address, phone, mobile, contact, email FROM users WHERE username=?", (username,))
+        user_data = cursor.fetchone()
         conn.close()
-        if user:
-            return User(*user)
+        if user_data:
+            return User(*user_data)  # Asegúrate de que user_data contiene todos los campos necesarios
         return None
+
 
     def get_email(self, email):
         conn = self._connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT username, password, role, cuit, name, address, phone, mobile, contact, email FROM users WHERE email=?", (email,))
+        cursor.execute("SELECT id, username, password, role, cuit, name, address, phone, mobile, contact, email FROM users WHERE email=?", (email,))
         user = cursor.fetchone()
         conn.close()
         if user:
@@ -31,7 +32,7 @@ class Database:
     def get_all_users(self):
         conn = self._connect()
         cursor = conn.cursor()
-        cursor.execute("SELECT username, password, role, cuit, name, address, phone, mobile, contact, email FROM users")
+        cursor.execute("SELECT id, username, password, role, cuit, name, address, phone, mobile, contact, email FROM users")
         users = cursor.fetchall()
         conn.close()
         return [User(*user) for user in users]

@@ -1,5 +1,5 @@
 from users.models.entities.user_entity import User
-from users.models.dto.user_dto import UserDTO
+from users.models.dtos.user_dto import UserDTO
 from users.models.mappers.user_mapper import UserMapper
 from users.repositories.user_repository import Database
 import bcrypt
@@ -13,12 +13,6 @@ class UserService:
         users = self.user_repository.get_all_users()
         return [UserMapper.EntityTo_UserResponseDto(user) for user in users]
 
-    def create_user(self, user_dto: UserDTO):
-        hashed_password = bcrypt.hashpw(user_dto.password.encode('utf-8'), bcrypt.gensalt())        
-        user = UserMapper.UserDtoTo_entity(user_dto)  
-        user.password =hashed_password.decode('utf-8')      
-        self.user_repository.create_user(user)
-        return UserMapper.EntityTo_UserResponseDto(user)
 
     def get_user(self, username):
         user = self.user_repository.get_user(username)
@@ -30,7 +24,7 @@ class UserService:
         user = self.user_repository.get_user(username)
         if user:
             # Pasamos el usuario existente para conservar la contraseña si no se proporciona una nueva
-            updated_user = UserMapper.UserRequestDtoTo_entity(user_request_dto, existing_user=user)
+            updated_user = UserMapper.UserRequestUpdateDtoTo_entity(user_request_dto, existing_user=user)
             self.user_repository.update_user(updated_user)
             return UserMapper.EntityTo_UserResponseDto(updated_user)
         return None

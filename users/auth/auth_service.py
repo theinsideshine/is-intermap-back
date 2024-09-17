@@ -1,5 +1,5 @@
 from users.models.entities.user_entity import User
-from users.models.dto.user_dto import UserDTO
+from users.models.dtos.user_dto import UserDTO
 from flask_jwt_extended import create_access_token
 import bcrypt
 
@@ -18,6 +18,7 @@ class AuthService:
     def register_user(self, user_dto: UserDTO):
         hashed_password = bcrypt.hashpw(user_dto.password.encode('utf-8'), bcrypt.gensalt())
         user = User(
+            id = 0,
             username=user_dto.username,
             password=hashed_password.decode('utf-8'),
             role=user_dto.role,

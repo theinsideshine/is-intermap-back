@@ -1,14 +1,14 @@
 from flask import Blueprint, jsonify, request, current_app
 from users.models.mappers.user_mapper import UserMapper
-from users.models.dto.user_request_dto import UserRequestDto
-from users.models.dto.user_dto import UserDTO
+from users.models.dtos.user_request_dto import UserRequestDto
+from users.models.dtos.user_dto import UserDTO
 from users.schemas.user_schema import user_schema  # Importamos el esquema
 from users.schemas.user_request_schema import user_request_schema  # Importamos el esquema
 from marshmallow import ValidationError
 from users.auth.auth_service import AuthService
 from users.repositories.user_repository import Database
 
-from users.models.dto.user_response_dto import UserResponseDto
+from users.models.dtos.user_response_dto import UserResponseDto
 from users.services.user_service import UserService
 from flask_jwt_extended import jwt_required
 from users.auth.auth_decorators import roles_required
@@ -42,6 +42,16 @@ def get_users():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
+@bp.route('/users/<username>', methods=['GET'])
+def get_user(username):
+    try:
+        user_response_dto = user_service.get_user(username)
+        if user_response_dto:
+            return jsonify(user_response_dto.__dict__), 200
+        return jsonify({'error': 'User not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
 # Endpoint para crear un usuario
 @bp.route('/users', methods=['POST'])
 def create():
@@ -61,22 +71,11 @@ def create():
         return jsonify({"error": "El email ya existe"}), 400
 
     # Crear el UserDTO usando el diccionario 'data'
-    user_dto = UserDTO(**data)
+    user_dto = UserDTO(**data)   
 
     auth.register_user(user_dto)
     return jsonify({"message": "Usuario registrado exitosamente"}), 201
 
-
-# Endpoint para obtener un usuario por su username
-@bp.route('/users/<username>', methods=['GET'])
-def get_user(username):
-    try:
-        user_response_dto = user_service.get_user(username)
-        if user_response_dto:            
-            return jsonify(user_response_dto.__dict__), 200
-        return jsonify({'error': 'User not found'}), 404
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
 
 # Endpoint para actualizar un usuario
 @bp.route('/users/<username>', methods=['PUT'])

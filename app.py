@@ -5,6 +5,7 @@ from flask_marshmallow import Marshmallow  # Importar Marshmallow
 from maps.controllers import intersection_controller, status_controller
 from users.auth import auth_controller
 from users.controllers import user_controller
+from interferences.controllers import interference_controller 
 from config import Config
 
 # Inicializar la aplicación Flask
@@ -27,7 +28,7 @@ app.register_blueprint(auth_controller.bp)
 app.register_blueprint(user_controller.bp)
 app.register_blueprint(intersection_controller.bp)
 app.register_blueprint(status_controller.bp)
-
+app.register_blueprint(interference_controller.bp)
 
 if __name__ == '__main__':
     app.run(debug=True)

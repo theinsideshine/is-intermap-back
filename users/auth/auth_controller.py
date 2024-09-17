@@ -1,7 +1,7 @@
 from flask import Blueprint, current_app, request, jsonify
 from users.auth.auth_service import AuthService
 from users.repositories.user_repository import Database
-from users.models.dto.user_dto import UserDTO
+from users.models.dtos.user_dto import UserDTO
 from users.schemas.user_schema import user_schema  # Importamos el esquema
 from marshmallow import ValidationError
 import os

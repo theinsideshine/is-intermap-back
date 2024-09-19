@@ -37,17 +37,19 @@ def register():
     data['role'] = 'user'
 
     if auth.user_exists(username):
-        return jsonify({"error": "El usuario ya existe"}), 400
+        return jsonify({"username": "El usuario ya existe"}), 400
     
     if auth.email_exists(email):
-        return jsonify({"error": "El email ya existe"}), 400
+        return jsonify({"email": "El email ya existe"}), 400
 
     # Crear el UserDTO usando el diccionario 'data'
     user_dto = UserDTO(**data)
-
-    auth.register_user(user_dto)
-    return jsonify({"message": "Usuario registrado exitosamente"}), 201
-
+    
+    try:
+        response_dto = auth.register_user(user_dto)
+        return jsonify(response_dto.__dict__), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 @bp.route('/login', methods=['POST'])
 def login():

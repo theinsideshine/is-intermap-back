@@ -1,5 +1,6 @@
 from users.models.entities.user_entity import User
 from users.models.dtos.user_dto import UserDTO
+from users.models.mappers.user_mapper import UserMapper
 from flask_jwt_extended import create_access_token
 import bcrypt
 
@@ -30,7 +31,8 @@ class AuthService:
             contact=user_dto.contact,
             email=user_dto.email
         )
-        self.db.create_user(user)
+        created_user= self.db.create_user(user)
+        return UserMapper.EntityTo_UserResponseDto(created_user)
 
     def login_user(self, username, password):
         user = self.db.get_user(username)

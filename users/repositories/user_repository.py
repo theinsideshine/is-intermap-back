@@ -38,15 +38,22 @@ class Database:
         return [User(*user) for user in users]
 
     def create_user(self, user: User):
-        conn = self._connect()
-        cursor = conn.cursor()
-        cursor.execute(
-            '''INSERT INTO users (username, password, role, cuit, name, address, phone, mobile, contact, email) 
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
-            (user.username, user.password, user.role, user.cuit, user.name, user.address, user.phone, user.mobile, user.contact, user.email)
-        )
-        conn.commit()
-        conn.close()
+        try:
+            conn = self._connect()
+            cursor = conn.cursor()
+            cursor.execute(
+                '''INSERT INTO users (username, password, role, cuit, name, address, phone, mobile, contact, email) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
+                (user.username, user.password, user.role, user.cuit, user.name, user.address, user.phone, user.mobile, user.contact, user.email)
+            )
+            conn.commit()
+            user.id = cursor.lastrowid
+            return user
+        except Exception as e:
+            print(f"Error al crear la interferencia: {e}")
+            raise
+        finally:
+            conn.close()
 
     def update_user(self, user: User):
         conn = self._connect()

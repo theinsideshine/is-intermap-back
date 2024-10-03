@@ -13,9 +13,12 @@ from maps.services.kml_service import (
 )
 from maps.services.kml_handler import KMLHandler
 from maps.services.gcp_bucket import GCPBucketService
+from config import Config
+from flask_jwt_extended import jwt_required
+from users.auth.auth_decorators import roles_required
 
 # Configurar logging
-log_file_path = 'logs/intersercion_controller.log'
+log_file_path = 'logs/map_controller.log'
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -26,7 +29,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 #bp = Blueprint('intersection', __name__)
-bp = Blueprint('intersection', __name__, url_prefix='/maps')
+bp = Blueprint('map', __name__, url_prefix='/maps')
 
 
 # Ruta al archivo KML original
@@ -36,9 +39,7 @@ logger.debug(f"Linestrings info extraído: {linestrings_info}")
 
 # Crear instancia de GCPBucketService (solo se necesita una)
 bucket_service = GCPBucketService()
-
-# Nombre del bucket de GCP
-bucket_name = 'mi-bucket-para-kml'  # Reemplaza esto con tu bucket de GCP
+ 
 
 def generate_random_filename():
     """Genera un nombre de archivo aleatorio usando UUID."""
@@ -49,7 +50,7 @@ def get_relative_file_path(filename):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(base_dir, 'output', filename)
 
-def generate_and_upload_kml(polygon):
+def generate_and_upload_kml(polygon, bucket_name):
     """Genera un archivo KML, lo guarda y lo sube a GCP, devolviendo el nombre del archivo y el punto representativo."""
     new_kml_filename = generate_random_filename()
     output_file_path = get_relative_file_path(new_kml_filename)
@@ -75,9 +76,11 @@ def build_response(intersections, kml_filename, point):
     response_with_point = add_point_view_to_response(response_with_filename, point)
     return response_with_point
 
-@bp.route('/check_intersection_with_tolerance', methods=['POST'])
+@bp.route('/verify_point', methods=['POST'])
+@jwt_required()  # Requiere un JWT para autenticar
+@roles_required('admin')  # Solo admin puede crear interferencias
 def check_intersection_with_tolerance():
-    logger.debug("Request recibida en /check_intersection_with_tolerance")
+    logger.debug("Request recibida en /verify_point")
     data = request.get_json()
     
     if not data or 'coord' not in data or 'tolerance' not in data:
@@ -97,7 +100,7 @@ def check_intersection_with_tolerance():
     intersections = check_polygon_intersection(polygon, linestrings_info)
 
     try:
-        kml_filename, point = generate_and_upload_kml(polygon)
+        kml_filename, point = generate_and_upload_kml(polygon, Config.BUCKET_TO_CHECK)
     except Exception as e:
         logger.error(f"Error al generar y subir el KML: {str(e)}")
         return jsonify({"error": str(e)}), 500
@@ -107,9 +110,11 @@ def check_intersection_with_tolerance():
     logger.debug(f"Respuesta generada: {response}")
     return jsonify(response)
 
-@bp.route('/check_intersection', methods=['POST'])
+@bp.route('/verify_polygon', methods=['POST'])
+@jwt_required()  # Requiere un JWT para autenticar
+@roles_required('admin')  # Solo admin puede crear interferencias
 def check_intersection():
-    logger.debug("Request recibida en /check_intersection")
+    logger.debug("Request recibida en /verify_polygon")
     data = request.get_json()
     
     if not data or 'polygon_coords' not in data:
@@ -124,7 +129,7 @@ def check_intersection():
     intersections = check_polygon_intersection(polygon, linestrings_info)
 
     try:
-        kml_filename, point = generate_and_upload_kml(polygon)
+        kml_filename, point = generate_and_upload_kml(polygon, Config.BUCKET_TO_CHECK)
     except Exception as e:
         logger.error(f"Error al generar y subir el KML: {str(e)}")
         return jsonify({"error generate and upload_kml": str(e)}), 500
@@ -133,4 +138,39 @@ def check_intersection():
 
     logger.debug(f"Respuesta generada: {response}")
     return jsonify(response)
+
+
+@bp.route('/save_polygon', methods=['POST'])
+@jwt_required()  # Requiere un JWT para autenticar
+@roles_required('admin')  # Solo admin puede crear interferencias
+def save_interfernce():
+    logger.debug("Request recibida en /save_polygon")
+    data = request.get_json()
+
+    if not data or 'polygon_coords' not in data:
+        logger.warning("No se proporcionaron coordenadas del polígono")
+        return jsonify({'error': 'No polygon coordinates provided'}), 400
+
+    polygon = create_polygon_from_coords(data['polygon_coords'])
+    if not polygon:
+        logger.error("Formato de coordenadas inválido")
+        return jsonify({"error": "Invalid coordinates format"}), 400
+
+    intersections = check_polygon_intersection(polygon, linestrings_info)
+
+    try:
+        kml_filename, point = generate_and_upload_kml(polygon, Config.BUCKET_TO_SAVE)
+    except Exception as e:
+        logger.error(f"Error al generar y subir el KML: {str(e)}")
+        
+        if "400" in str(e):
+            return jsonify({"error": "Hubo un error al subir el archivo (400): Verifique los datos y vuelva a intentarlo."}), 400
+        
+        return jsonify({"error": str(e)}), 500
+
+    response = build_response(intersections, kml_filename, point)
+
+    logger.debug(f"Respuesta generada: {response}")
+    return jsonify(response)
+
 

@@ -109,6 +109,6 @@ def add_filename_to_response(response, filename):
 
 def add_point_view_to_response(response, point):
  
-    response['representative_point'] = {'lat': point[1], 'lng': point[0]}
+    response['point_reference'] = {'lat': point[1], 'lng': point[0]}
     
     return response

@@ -6,6 +6,7 @@ from marshmallow import ValidationError
 from interferences.services.interference_service import InterferenceService
 from flask_jwt_extended import jwt_required
 from users.auth.auth_decorators import roles_required
+from datetime import datetime
 import os
 
 # Definir el Blueprint
@@ -45,6 +46,43 @@ def get_interference(interference_id):
         return jsonify({'error': 'Interference not found'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+    
+@bp.route('/interferences/page/<int:page>', methods=['GET'])
+def get_interferences_paginated(page):
+    try:
+        
+        page_size = 5  # Tamaño de la página
+        paginated_result = interference_service.get_interferences_paginated(page, page_size)
+
+
+        response = {
+            "content": paginated_result["interferences"],
+            "pageable": {
+                "sort": {
+                    "empty": True,
+                    "sorted": False,
+                    "unsorted": True
+                },
+                "offset": page * page_size,
+                "pageNumber": page,
+                "pageSize": page_size,
+                "paged": True,
+                "unpaged": False
+            },
+            "last": paginated_result["is_last"],
+            "totalPages": paginated_result["total_pages"],
+            "totalElements": paginated_result["total_elements"],
+            "size": page_size,
+            "number": page,
+            "first": page == 0,
+            "numberOfElements": len(paginated_result["interferences"]),
+            "empty": len(paginated_result["interferences"]) == 0
+        }
+
+        return jsonify(response)  # Asegúrate de usar jsonify para la respuesta JSON
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 # Endpoint para crear una nueva interferencia
 @bp.route('/interferences', methods=['POST'])
@@ -68,9 +106,6 @@ def create_interference():
         return jsonify({'error': str(e)}), 400
 
 
-
-
-
 # Endpoint para actualizar una interferencia
 @bp.route('/interferences/<int:interference_id>', methods=['PUT'])
 @jwt_required()  # Requiere un JWT para autenticar
@@ -83,8 +118,7 @@ def update_interference(interference_id):
     except ValidationError as err:
         return jsonify(err.messages), 400
 
-    interference_request_dto = InterferenceRequestDTO(**data)
-
+    interference_request_dto = InterferenceRequestDTO(**data)    
     try:
         response_dto = interference_service.update_interference(interference_id, interference_request_dto)
         if response_dto:

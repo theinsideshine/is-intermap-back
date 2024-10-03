@@ -1,6 +1,6 @@
 class Interference:
-    def __init__(self, id,  username, email, company, address_ref, status, last, start, polygon_coords, coord, tolerance, url_file, ):
-        self.id = id  # ID será opcional, útil cuando crees una nueva interferencia
+    def __init__(self, id=None, username=None, email=None, company=None, address_ref=None, status=None, last=None, start=None, point_reference=None, url_file=None, interference=None):
+        self.id = id  # ID será opcional
         self.username = username
         self.email = email
         self.company = company
@@ -8,10 +8,6 @@ class Interference:
         self.status = status
         self.last = last  # Fecha
         self.start = start  # Fecha
-        self.polygon_coords = polygon_coords  # Lista de coordenadas del polígono
-        self.coord = coord  # Coordenada de un punto (latitud y longitud)
-        self.tolerance = tolerance  # Tolerancia en metros
+        self.point_reference = point_reference  # Cambiado de `coord` a `point_reference`
         self.url_file = url_file  # URL del archivo asociado
-
-    def __repr__(self):
-        return f"<Interference(username={self.username}, email={self.email}, company={self.company}, address_ref={self.address_ref}, status={self.status}, last={self.last}, start={self.start}, tolerance={self.tolerance}, url_file={self.url_file})>"
+        self.interference = interference  # Nuevo campo booleano

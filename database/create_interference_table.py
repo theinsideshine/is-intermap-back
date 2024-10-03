@@ -5,17 +5,14 @@ import json
 
 """
 {
-  "username": "user1",
-  "email": "user1@example.com",
-  "company": "Company A",
-  "address_ref": "123 Main St",
-  "status": "active",
-  "last": "2024-09-16",
-  "start": "2024-09-01",
-  "polygon_coords": "[[-34.9011, -56.1645], [-34.9025, -56.1622], [-34.9045, -56.1642], [-34.9031, -56.1665], [-34.9011, -56.1645]]",
-  "coord": "[-34.620423798981946, -58.449699592590335]",
-  "tolerance": 1000,
-  "url_file": "http://example.com/file"
+    "username": "tavolaro",
+    "email": "tavolaro@example.com",
+    "company": "Rht",
+    "address_ref": "Saenz 145",
+    "status": "waiting",
+    "point_reference": [-34.620423798981946, -58.449699592590335],  // Cambiado a lista
+    "url_file": "cable_polygon_3c08fc58880f475084ecdbce312fc591.kml",
+    "interference": true
 }
 
 """
@@ -35,7 +32,7 @@ try:
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
-    # Crear la tabla interferences con todas las columnas necesarias
+    # Crear la tabla interferences con las columnas actualizadas
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS interferences (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,16 +43,15 @@ try:
             status TEXT,
             last DATE,
             start DATE,
-            polygon_coords TEXT,  -- Almacenar el polígono como un string JSON
-            coord TEXT,           -- Almacenar las coordenadas como un string JSON
-            tolerance INTEGER,
-            url_file TEXT
+            point_reference TEXT,  -- Cambio de nombre de coord a point_reference
+            url_file TEXT,
+            interference BOOLEAN  -- Nueva columna boolean para indicar interferencia
         )
     ''')
 
     # Confirmar los cambios y cerrar la conexión
     conn.commit()
-    print(f"Base de datos y tabla 'interferences' creadas en '{db_path}' con todas las columnas.")
+    print(f"Base de datos y tabla 'interferences' creadas/actualizadas en '{db_path}' con las columnas necesarias.")
 
 except sqlite3.Error as e:
     print(f"Error al conectar a la base de datos o crear la tabla: {e}")

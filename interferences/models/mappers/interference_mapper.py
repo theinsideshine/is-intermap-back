@@ -14,10 +14,9 @@ class InterferenceMapper:
             status=interference.status,
             last=interference.last,
             start=interference.start,
-            polygon_coords=interference.polygon_coords, 
-            coord=interference.coord,
-            tolerance=interference.tolerance,
-            url_file=interference.url_file
+            point_reference=interference.point_reference,  # Cambiado de `coord` a `point_reference`
+            url_file=interference.url_file,
+            interference=interference.interference  # Nuevo campo booleano
         )
 
     @staticmethod
@@ -31,13 +30,16 @@ class InterferenceMapper:
             existing_interference.status = interference_request_dto.status
             existing_interference.last = interference_request_dto.last
             existing_interference.start = interference_request_dto.start
-            existing_interference.polygon_coords = interference_request_dto.polygon_coords
-            existing_interference.coord = interference_request_dto.coord
-            existing_interference.tolerance = interference_request_dto.tolerance
+            existing_interference.point_reference = interference_request_dto.point_reference  # Cambiado de `coord` a `point_reference`
             existing_interference.url_file = interference_request_dto.url_file
+            existing_interference.interference = interference_request_dto.interference  # Nuevo campo booleano
+
+            # Debug para verificar la asignación de `url_file`
+            print(f"Mapper - Existing Interference - url_file: {existing_interference.url_file}")
+            
             return existing_interference
         else:
-            return Interference(
+            interference = Interference(
                 username=interference_request_dto.username,
                 email=interference_request_dto.email,
                 company=interference_request_dto.company,
@@ -45,8 +47,28 @@ class InterferenceMapper:
                 status=interference_request_dto.status,
                 last=interference_request_dto.last,
                 start=interference_request_dto.start,
-                polygon_coords=interference_request_dto.polygon_coords,
-                coord=interference_request_dto.coord,
-                tolerance=interference_request_dto.tolerance,
-                url_file=interference_request_dto.url_file
+                point_reference=interference_request_dto.point_reference,  # Cambiado de `coord` a `point_reference`
+                url_file=interference_request_dto.url_file,
+                interference=interference_request_dto.interference  # Nuevo campo booleano
             )
+
+            # Debug para verificar la asignación de `url_file`
+            print(f"Mapper - New Interference - url_file: {interference.url_file}")
+            
+            return interference
+
+    @staticmethod
+    def ResponseDtoToDict(response_dto):
+        return {
+            "id": response_dto.id,
+            "username": response_dto.username,
+            "email": response_dto.email,
+            "company": response_dto.company,
+            "address_ref": response_dto.address_ref,
+            "status": response_dto.status,
+            "last": response_dto.last,
+            "start": response_dto.start,
+            "point_reference": response_dto.point_reference,  # Cambiado de `coord` a `point_reference`
+            "url_file": response_dto.url_file,
+            "interference": response_dto.interference  # Nuevo campo booleano
+        }

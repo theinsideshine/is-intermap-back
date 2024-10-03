@@ -1,5 +1,5 @@
 class InterferenceResponseDTO:
-    def __init__(self, id, username, email, company, address_ref, status, last, start, polygon_coords, coord, tolerance, url_file):
+    def __init__(self, id, username, email, company, address_ref, status, last, start, point_reference, url_file, interference):
         self.id = id
         self.username = username
         self.email = email
@@ -8,7 +8,7 @@ class InterferenceResponseDTO:
         self.status = status
         self.last = last
         self.start = start
-        self.polygon_coords = polygon_coords
-        self.coord = coord
-        self.tolerance = tolerance
+        self.point_reference = point_reference  # Cambiado de `coord` a `point_reference`
         self.url_file = url_file
+        self.interference = interference  # Nuevo campo booleano
+

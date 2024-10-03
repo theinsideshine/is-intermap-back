@@ -2,6 +2,7 @@ from interferences.models.entities.interference_entity import Interference
 from interferences.models.dtos import InterferenceRequestDTO, InterferenceResponseDTO
 from interferences.models.mappers.interference_mapper import InterferenceMapper
 from interferences.repositories.interference_repository import Database
+from datetime import datetime
 
 class InterferenceService:
     def __init__(self, db_path):
@@ -13,12 +14,19 @@ class InterferenceService:
         return [InterferenceMapper.EntityTo_ResponseDto(interference) for interference in interferences]
 
     def create_interference(self, interference_request_dto: InterferenceRequestDTO):
-        # Convierte el DTO a entidad
+        # Aquí puedes establecer las fechas a la fecha actual
+        current_date = datetime.now().strftime('%Y-%m-%d')  # O el formato que necesites
         interference = InterferenceMapper.RequestDtoTo_entity(interference_request_dto)
-        # Llama al repositorio para guardar la entidad y obtener el ID generado
+        
+        # Establecer fechas en la entidad
+        interference.last = current_date
+        interference.start = current_date
+        interference.status = "open"
+
         created_interference = self.interference_repository.create_interference(interference)
-        # Convierte la entidad creada a DTO y retorna
         return InterferenceMapper.EntityTo_ResponseDto(created_interference)
+
+
 
 
     def get_interference(self, id):
@@ -28,17 +36,66 @@ class InterferenceService:
         return None
 
     def update_interference(self, id, interference_request_dto: InterferenceRequestDTO):
+        # Debug para verificar el DTO recibido
+        print(f"Service - url_file: {interference_request_dto.url_file}")
+
+        # Aquí puedes establecer las fechas a la fecha actual
+        current_date = datetime.now().strftime('%Y-%m-%d')  # O el formato que necesites
+
         # Obtén la interferencia existente
         interference = self.interference_repository.get_interference(id)
+
+        print(f"Service - interference.last: {interference.last}")
+        print(f"Service - interference.start: {interference.start}")
+         # Establecer fechas en la entidad
+      
+        interference_request_dto.start = interference.start 
+        interference_request_dto.last =  current_date
+        print(f"Service - get_interference(id): {interference}")
+
         if interference:
             # Actualiza la interferencia existente con los datos del DTO
             updated_interference = InterferenceMapper.RequestDtoTo_entity(interference_request_dto, existing_interference=interference)
-            # Actualiza la interferencia en el repositorio y obtén la entidad actualizada
+            
+            # Debug para verificar que el mapeo fue correcto
+            print(f"Mapped Entity - url_file: {updated_interference.url_file}")
+
+            # Actualiza la interferencia en el repositorio
             updated_interference = self.interference_repository.update_interference(updated_interference)
             updated_interference.id = id
+            
             # Devuelve la entidad actualizada convertida a DTO
             return InterferenceMapper.EntityTo_ResponseDto(updated_interference)
         return None
+
+    
+    def get_interferences_paginated(self, page, page_size):
+        # Obtener el número total de interferencias
+        total_interferences = self.interference_repository.count_interferences()
+        print("total interferencias:",total_interferences)
+        total_pages = (total_interferences + page_size - 1) // page_size  # Calcular el total de páginas
+        print("total paginas:",total_pages)
+        # Calcular si esta es la última página
+        is_last = (page + 1) >= total_pages
+
+        # Obtener las interferencias paginadas
+        interferences = self.interference_repository.get_interferences_by_page(page, page_size)
+
+        print(interferences)
+
+        # Convertir las interferencias a ResponseDto y luego a diccionarios en una sola línea
+        interferences_response = [
+            InterferenceMapper.ResponseDtoToDict(InterferenceMapper.EntityTo_ResponseDto(interference))
+            for interference in interferences
+        ]
+
+        return {
+            "interferences": interferences_response,
+            "total_pages": total_pages,
+            "total_elements": total_interferences,
+            "is_last": is_last
+        }
+
 
 
 

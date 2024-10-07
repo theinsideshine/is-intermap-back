@@ -130,6 +130,44 @@ class Database:
         count = cursor.fetchone()[0]
         conn.close()
         return count
+    
+
+    def count_interferences_by_username(self, username):
+        conn = self._connect()
+        cursor = conn.cursor()
+        cursor.execute('''SELECT COUNT(*) FROM interferences WHERE username = ?''', (username,))
+        count = cursor.fetchone()[0]
+        conn.close()
+        return count
+
+    def get_interferences_by_username_and_page(self, username, page, page_size):
+        offset = page * page_size
+        conn = self._connect()
+        cursor = conn.cursor()
+        cursor.execute('''SELECT id, username, email, company, address_ref, status, last, start, point_reference, url_file, interference 
+                        FROM interferences 
+                        WHERE username = ? 
+                        LIMIT ? OFFSET ?''', (username, page_size, offset))
+        interferences = cursor.fetchall()
+        conn.close()
+
+        # Asegúrate de desempaquetar todos los elementos necesarios
+        return [
+            Interference(
+                id=interference[0],  # id
+                username=interference[1],  # username
+                email=interference[2],  # email
+                company=interference[3],  # company
+                address_ref=interference[4],  # address_ref
+                status=interference[5],  # status
+                last=interference[6],  # last
+                start=interference[7],  # start
+                point_reference=json.loads(interference[8]),  # point_reference
+                url_file=interference[9],  # url_file
+                interference=interference[10]  # interference
+            ) for interference in interferences
+        ]
+
 
     def delete_interference(self, id):
         conn = self._connect()

@@ -5,6 +5,7 @@ from interferences.schemas.interference_request_schema import InterferenceReques
 from marshmallow import ValidationError
 from interferences.services.interference_service import InterferenceService
 from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity, get_jwt
 from users.auth.auth_decorators import roles_required
 from datetime import datetime
 import os
@@ -47,12 +48,55 @@ def get_interference(interference_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 400
     
+
+
+# Endpoint para crear una nueva interferencia
+@bp.route('/interferences', methods=['POST'])
+@jwt_required()  # Requiere un JWT para autenticar
+@roles_required('admin', 'user')   
+def create_interference():
+    try:
+        # Crear una instancia del esquema y validar los datos recibidos
+        schema = InterferenceRequestSchema()
+        data = schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+
+    # Crear el InterferenceRequestDTO usando el diccionario 'data'
+    interference_request_dto = InterferenceRequestDTO(**data)
+
+    try:
+        response_dto = interference_service.create_interference(interference_request_dto)
+        return jsonify(response_dto.__dict__), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400 
+
 @bp.route('/interferences/page/<int:page>', methods=['GET'])
+@jwt_required()  # Requiere un JWT para autenticar
 def get_interferences_paginated(page):
     try:
+       # Obtiene el JWT identity, que parece contener tanto el username como el rol
+        current_user = get_jwt_identity()        
+
+        # Extrae el rol directamente desde el objeto retornado por get_jwt_identity()
+        role = current_user.get('role', None)
+        username = current_user.get('username', None)
+
+        # Verifica si el usuario tiene el rol de 'admin'
+        is_admin = role == 'admin'
         
+        # Imprime para depuración
+        print(f"Username: {username}, Admin: {is_admin}")
+       
+
         page_size = 5  # Tamaño de la página
-        paginated_result = interference_service.get_interferences_paginated(page, page_size)
+
+        # Si el usuario es admin, traer todas las interferencias
+        if is_admin:
+            paginated_result = interference_service.get_interferences_paginated(page, page_size)
+        else:
+            # Si no es admin, traer solo las interferencias del usuario actual
+            paginated_result = interference_service.get_interferences_by_username_paginated(username, page, page_size)       
 
 
         response = {
@@ -79,31 +123,9 @@ def get_interferences_paginated(page):
             "empty": len(paginated_result["interferences"]) == 0
         }
 
-        return jsonify(response)  # Asegúrate de usar jsonify para la respuesta JSON
+        return jsonify(response)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-# Endpoint para crear una nueva interferencia
-@bp.route('/interferences', methods=['POST'])
-@jwt_required()  # Requiere un JWT para autenticar
-@roles_required('admin')  # Solo admin puede crear interferencias
-def create_interference():
-    try:
-        # Crear una instancia del esquema y validar los datos recibidos
-        schema = InterferenceRequestSchema()
-        data = schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 400
-
-    # Crear el InterferenceRequestDTO usando el diccionario 'data'
-    interference_request_dto = InterferenceRequestDTO(**data)
-
-    try:
-        response_dto = interference_service.create_interference(interference_request_dto)
-        return jsonify(response_dto.__dict__), 201
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
 
 
 # Endpoint para actualizar una interferencia

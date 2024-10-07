@@ -96,6 +96,35 @@ class InterferenceService:
             "is_last": is_last
         }
 
+    def get_interferences_by_username_paginated(self, username, page, page_size):
+        # Obtener el número total de interferencias para el usuario específico
+        total_interferences = self.interference_repository.count_interferences_by_username(username)
+        print("Total interferencias para el usuario:", total_interferences)
+        
+        total_pages = (total_interferences + page_size - 1) // page_size  # Calcular el total de páginas
+        print("Total páginas para el usuario:", total_pages)
+        
+        # Calcular si esta es la última página
+        is_last = (page + 1) >= total_pages
+
+        # Obtener las interferencias paginadas para el usuario
+        interferences = self.interference_repository.get_interferences_by_username_and_page(username, page, page_size)
+
+        print(interferences)
+
+        # Convertir las interferencias a ResponseDto y luego a diccionarios en una sola línea
+        interferences_response = [
+            InterferenceMapper.ResponseDtoToDict(InterferenceMapper.EntityTo_ResponseDto(interference))
+            for interference in interferences
+        ]
+
+        return {
+            "interferences": interferences_response,
+            "total_pages": total_pages,
+            "total_elements": total_interferences,
+            "is_last": is_last
+        }
+
 
 
 

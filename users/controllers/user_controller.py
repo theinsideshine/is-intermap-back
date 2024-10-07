@@ -35,6 +35,8 @@ def setup():
 
 # Endpoint para obtener todos los usuarios
 @bp.route('/users', methods=['GET'])
+@jwt_required()  # Asegúrate de que el JWT esté presente
+@roles_required('admin', 'superuser')
 def get_users():
     try:
         response_dtos = user_service.get_all_users()        
@@ -44,6 +46,8 @@ def get_users():
 
 # Endpoint para obtener usuarios paginados
 @bp.route('/users/page/<int:page>', methods=['GET'])
+@jwt_required()  # Asegúrate de que el JWT esté presente
+@roles_required('admin', 'superuser')
 def get_users_paginated(page):
     try:
         page_size = 5  # Tamaño de la página, puedes hacerlo dinámico si lo prefieres
@@ -84,6 +88,8 @@ def get_users_paginated(page):
 
 
 @bp.route('/users/<username>', methods=['GET'])
+@jwt_required()  # Asegúrate de que el JWT esté presente
+@roles_required('admin', 'superuser')
 def get_user(username):
     try:
         user_response_dto = user_service.get_user(username)
@@ -120,24 +126,6 @@ def create():
     return jsonify({"message": "Usuario registrado exitosamente"}), 201
 
 
-""" # Endpoint para actualizar un usuario
-@bp.route('/users/<username>', methods=['PUT'])
-def update_user(username):
-    try:
-        # Validar los datos recibidos
-        data = user_request_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 400
-    try:
-        #data = request.get_json()
-        user_request_dto = UserRequestDto(**data)
-        user_response_dto = user_service.update_user(username, user_request_dto)
-        if user_response_dto:           
-            return jsonify(user_response_dto.__dict__), 200
-        return jsonify({'error': 'User not found'}), 404
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400 """
-
 @bp.route('/users/<int:id>', methods=['PUT'])
 @jwt_required()  # Asegúrate de que el JWT esté presente
 @roles_required('admin', 'superuser')
@@ -164,24 +152,9 @@ def update_user(id):
     except Exception as e:
         print(f"Error durante la actualización: {str(e)}")  # Imprimir cualquier excepción
         return jsonify({'error': str(e)}), 400
+  
 
 
-   
-
-
-""" # Endpoint para eliminar un usuario
-@bp.route('/users/<username>', methods=['DELETE'])
-@jwt_required()  # Asegúrate de que el JWT esté presente
-@roles_required('admin')  # Asegúrate de que el rol sea 'admin'
-def delete_user(username):
-    try:
-        success = user_service.delete_user(username)
-        if success:
-            return jsonify({'message': 'User deleted successfully'}), 200
-        return jsonify({'error': 'User not found'}), 404
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
- """
 
 @bp.route('/users/<int:user_id>', methods=['DELETE'])
 @jwt_required()  # Asegúrate de que el JWT esté presente

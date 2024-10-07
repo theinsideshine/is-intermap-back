@@ -28,9 +28,7 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
-#bp = Blueprint('intersection', __name__)
 bp = Blueprint('map', __name__, url_prefix='/maps')
-
 
 # Ruta al archivo KML original
 KML_FILE_PATH = 'cables.kml'
@@ -39,7 +37,6 @@ logger.debug(f"Linestrings info extraído: {linestrings_info}")
 
 # Crear instancia de GCPBucketService (solo se necesita una)
 bucket_service = GCPBucketService()
- 
 
 def generate_random_filename():
     """Genera un nombre de archivo aleatorio usando UUID."""
@@ -76,101 +73,82 @@ def build_response(intersections, kml_filename, point):
     response_with_point = add_point_view_to_response(response_with_filename, point)
     return response_with_point
 
-@bp.route('/verify_point', methods=['POST'])
-@jwt_required()  # Requiere un JWT para autenticar
-@roles_required('admin')  # Solo admin puede crear interferencias
-def check_intersection_with_tolerance():
-    logger.debug("Request recibida en /verify_point")
-    data = request.get_json()
-    
-    if not data or 'coord' not in data or 'tolerance' not in data:
-        logger.warning("Datos faltantes en la solicitud")
-        return jsonify({'error': 'Coordinates and tolerance must be provided'}), 400
+def process_request_data(data, key_coords, key_tolerance=None):
+    """Procesa y valida los datos de la solicitud para puntos o polígonos."""
+    if key_tolerance:
+        if not data or key_coords not in data or key_tolerance not in data:
+            logger.warning("Datos faltantes en la solicitud")
+            return None, {'error': 'Coordinates and tolerance must be provided'}, 400
+        try:
+            latitude = float(data[key_coords][0])
+            longitude = float(data[key_coords][1])
+            tolerance_meters = float(data[key_tolerance])
+            return create_square_polygon(latitude, longitude, tolerance_meters), None, None
+        except (ValueError, TypeError) as e:
+            logger.error(f"Error en el formato de coordenadas o tolerancia: {str(e)}")
+            return None, {"error": "Invalid coordinates or tolerance format"}, 400
+    else:
+        if not data or key_coords not in data:
+            logger.warning("No se proporcionaron coordenadas del polígono")
+            return None, {'error': 'No polygon coordinates provided'}, 400
+        polygon = create_polygon_from_coords(data[key_coords])
+        if not polygon:
+            logger.error("Formato de coordenadas inválido")
+            return None, {"error": "Invalid coordinates format"}, 400
+        return polygon, None, None
 
+def handle_kml_process(polygon, bucket_name):
+    """Genera un KML, lo sube y devuelve la respuesta."""
     try:
-        latitude = float(data['coord'][0])
-        longitude = float(data['coord'][1])
-        tolerance_meters = float(data['tolerance'])
-        logger.info(f"Parámetros recibidos - Latitud: {latitude}, Longitud: {longitude}, Tolerancia: {tolerance_meters} metros")
-    except (ValueError, TypeError) as e:
-        logger.error(f"Error en el formato de coordenadas o tolerancia: {str(e)}")
-        return jsonify({"error": "Invalid coordinates or tolerance format"}), 400
-
-    polygon = create_square_polygon(latitude, longitude, tolerance_meters)
-    intersections = check_polygon_intersection(polygon, linestrings_info)
-
-    try:
-        kml_filename, point = generate_and_upload_kml(polygon, Config.BUCKET_TO_CHECK)
+        kml_filename, point = generate_and_upload_kml(polygon, bucket_name)
+        return kml_filename, point, None
     except Exception as e:
         logger.error(f"Error al generar y subir el KML: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        return None, None, {"error": str(e)}, 500
 
+def handle_interference_request(data, key_coords, key_tolerance, bucket_name):
+    """Función genérica para manejar solicitudes de interferencia con puntos o polígonos."""
+    polygon, error_response, error_code = process_request_data(data, key_coords, key_tolerance)
+    if error_response:
+        return jsonify(error_response), error_code
+
+    intersections = check_polygon_intersection(polygon, linestrings_info)
+    
+    kml_filename, point, error_response = handle_kml_process(polygon, bucket_name)
+
+    if error_response:
+        return jsonify(error_response), error_code
+    
     response = build_response(intersections, kml_filename, point)
-
     logger.debug(f"Respuesta generada: {response}")
     return jsonify(response)
+
+@bp.route('/verify_point', methods=['POST'])
+@jwt_required()
+@roles_required('admin', 'user') 
+def check_intersection_with_tolerance():
+    data = request.get_json()
+    return handle_interference_request(data, 'coord', 'tolerance', Config.BUCKET_TO_CHECK)
 
 @bp.route('/verify_polygon', methods=['POST'])
-@jwt_required()  # Requiere un JWT para autenticar
-@roles_required('admin')  # Solo admin puede crear interferencias
+@jwt_required()
+@roles_required('admin', 'user') 
 def check_intersection():
-    logger.debug("Request recibida en /verify_polygon")
     data = request.get_json()
-    
-    if not data or 'polygon_coords' not in data:
-        logger.warning("No se proporcionaron coordenadas del polígono")
-        return jsonify({'error': 'No polygon coordinates provided'}), 400
+    return handle_interference_request(data, 'polygon_coords', None, Config.BUCKET_TO_CHECK)
 
-    polygon = create_polygon_from_coords(data['polygon_coords'])
-    if not polygon:
-        logger.error("Formato de coordenadas inválido")
-        return jsonify({"error": "Invalid coordinates format"}), 400
-
-    intersections = check_polygon_intersection(polygon, linestrings_info)
-
-    try:
-        kml_filename, point = generate_and_upload_kml(polygon, Config.BUCKET_TO_CHECK)
-    except Exception as e:
-        logger.error(f"Error al generar y subir el KML: {str(e)}")
-        return jsonify({"error generate and upload_kml": str(e)}), 500
-
-    response = build_response(intersections, kml_filename, point)
-
-    logger.debug(f"Respuesta generada: {response}")
-    return jsonify(response)
-
+@bp.route('/save_point', methods=['POST'])
+@jwt_required()
+@roles_required('admin', 'user') 
+def save_interference_point():
+    data = request.get_json()
+    return handle_interference_request(data, 'coord', 'tolerance', Config.BUCKET_TO_SAVE)
 
 @bp.route('/save_polygon', methods=['POST'])
-@jwt_required()  # Requiere un JWT para autenticar
-@roles_required('admin')  # Solo admin puede crear interferencias
-def save_interfernce():
-    logger.debug("Request recibida en /save_polygon")
+@jwt_required()
+@roles_required('admin', 'user') 
+def save_interference_polygon():
     data = request.get_json()
-
-    if not data or 'polygon_coords' not in data:
-        logger.warning("No se proporcionaron coordenadas del polígono")
-        return jsonify({'error': 'No polygon coordinates provided'}), 400
-
-    polygon = create_polygon_from_coords(data['polygon_coords'])
-    if not polygon:
-        logger.error("Formato de coordenadas inválido")
-        return jsonify({"error": "Invalid coordinates format"}), 400
-
-    intersections = check_polygon_intersection(polygon, linestrings_info)
-
-    try:
-        kml_filename, point = generate_and_upload_kml(polygon, Config.BUCKET_TO_SAVE)
-    except Exception as e:
-        logger.error(f"Error al generar y subir el KML: {str(e)}")
-        
-        if "400" in str(e):
-            return jsonify({"error": "Hubo un error al subir el archivo (400): Verifique los datos y vuelva a intentarlo."}), 400
-        
-        return jsonify({"error": str(e)}), 500
-
-    response = build_response(intersections, kml_filename, point)
-
-    logger.debug(f"Respuesta generada: {response}")
-    return jsonify(response)
+    return handle_interference_request(data, 'polygon_coords', None, Config.BUCKET_TO_SAVE)
 
 

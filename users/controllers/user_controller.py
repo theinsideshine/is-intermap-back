@@ -122,8 +122,11 @@ def create():
     # Crear el UserDTO usando el diccionario 'data'
     user_dto = UserDTO(**data)   
 
-    auth.register_user(user_dto)
-    return jsonify({"message": "Usuario registrado exitosamente"}), 201
+    try:
+        response_dto = auth.register_user(user_dto)
+        return jsonify(response_dto.__dict__), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 
 @bp.route('/users/<int:id>', methods=['PUT'])

@@ -5,7 +5,6 @@ from flask_jwt_extended import jwt_required
 bp = Blueprint('api', __name__)
 
 @bp.route('/status', methods=['GET'])
-@any_role_required
 def status():
     return "Estoy vivo", 200
 

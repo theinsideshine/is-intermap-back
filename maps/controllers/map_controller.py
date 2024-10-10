@@ -151,4 +151,17 @@ def save_interference_polygon():
     data = request.get_json()
     return handle_interference_request(data, 'polygon_coords', None, Config.BUCKET_TO_SAVE)
 
+@bp.route('/delete_bucket_interference', methods=['DELETE'])
+@jwt_required()
+@roles_required('admin')
+def delete_bucket():
+    try:
+        bucket_name = Config.BUCKET_TO_SAVE
+        bucket_service.clear_bucket(bucket_name)
+        logger.info(f"Bucket {bucket_name} eliminado exitosamente.")
+        return jsonify({"message": f"Bucket '{bucket_name}' eliminado exitosamente."}), 200
+    except Exception as e:
+        logger.error(f"Error al eliminar el bucket: {str(e)}")
+        return jsonify({"error": f"Error al eliminar el bucket: {str(e)}"}), 500
+
 

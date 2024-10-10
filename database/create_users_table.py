@@ -34,9 +34,18 @@ try:
         )
     ''')
 
+    # Insertar los usuarios
+    cursor.execute('''
+        INSERT INTO users (username, password, role, cuit, name, address, phone, mobile, contact, email)
+        VALUES 
+        ('tavolaro', '$2b$12$VyyNDsFAv.8HKsRzDRNw9.usbTVsg6RBBilK23AtDp12s.4he8zeC', 'admin', '20-25895331-3', 'pablo oscar', 'Alberdi 1645', '+54 11 46315743', '+54 9 11 550681', 'sordeara', 'poto@example.com'),
+        ('marcela', '$2b$12$9oc/TTep8SE6aFYg8VF9mu5EFE/SnGMVslRSCwzQkBwfbpKO2dv7O', 'user', '20-12345678-3', 'Guille', 'Gilar', '1146315743', '1145758963', 'marcela', 'marcela.ta@gmail.com'),
+        ('rvillar', '$2b$12$B5X5DxR11Av0mPvmMngbKOVofGURbqpBsaZHeGnMkpSJ/j3WWaOOu', 'admin', '20-25563258-3', 'Rodrigo Jesus Villar', 'Lescano 917', '01139484142', '01139484142', 'rodrigo', 'rodrigo.villar@msn.com')
+    ''')
+
     # Confirmar los cambios y cerrar la conexión
     conn.commit()
-    print(f"Base de datos y tabla 'users' creadas en '{db_path}' con todas las columnas.")
+    print(f"Base de datos, tabla 'users' creadas y registros insertados en '{db_path}'.")
 
 except sqlite3.Error as e:
     print(f"Error al conectar a la base de datos o crear la tabla: {e}")

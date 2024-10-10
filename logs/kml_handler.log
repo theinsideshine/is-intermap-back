@@ -724,3 +724,69 @@
 2024-10-07 09:47:59,186 - INFO - Vamos a agregar el polígono al archivo: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_a7fb1db61cfa4d1388e1eb4226c6d553.kml
 2024-10-07 09:47:59,230 - INFO - Archivo KML actualizado con el polígono y guardado en: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_a7fb1db61cfa4d1388e1eb4226c6d553.kml
 2024-10-07 09:47:59,231 - INFO - Punto representativo del polígono: (-58.38986681825678, -34.597658728758944)
+2024-10-10 07:22:22,443 - INFO - Inicializando KMLHandler con archivo KML: cables.kml
+2024-10-10 07:22:22,444 - INFO - Archivo KML cables.kml cargado correctamente.
+2024-10-10 07:22:22,550 - INFO - Contenido del archivo KML procesado correctamente.
+2024-10-10 07:22:22,550 - INFO - Vamos a agregar el polígono al archivo: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_033d110e541341d1a4d36b4c96c44757.kml
+2024-10-10 07:22:22,595 - INFO - Archivo KML actualizado con el polígono y guardado en: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_033d110e541341d1a4d36b4c96c44757.kml
+2024-10-10 07:22:22,596 - INFO - Punto representativo del polígono: (-58.46189777370825, -34.54511958101397)
+2024-10-10 07:23:53,011 - INFO - Inicializando KMLHandler con archivo KML: cables.kml
+2024-10-10 07:23:53,013 - INFO - Archivo KML cables.kml cargado correctamente.
+2024-10-10 07:23:53,154 - INFO - Contenido del archivo KML procesado correctamente.
+2024-10-10 07:23:53,155 - INFO - Vamos a agregar el polígono al archivo: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_70e63c3966bb4da89c310a5444962212.kml
+2024-10-10 07:23:53,203 - INFO - Archivo KML actualizado con el polígono y guardado en: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_70e63c3966bb4da89c310a5444962212.kml
+2024-10-10 07:23:53,204 - INFO - Punto representativo del polígono: (-57.54616250025751, -37.98089835569253)
+2024-10-10 07:25:18,069 - INFO - Inicializando KMLHandler con archivo KML: cables.kml
+2024-10-10 07:25:18,070 - INFO - Archivo KML cables.kml cargado correctamente.
+2024-10-10 07:25:18,180 - INFO - Contenido del archivo KML procesado correctamente.
+2024-10-10 07:25:18,180 - INFO - Vamos a agregar el polígono al archivo: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_8dcf836c3d2643be8cc49ca07ea21c9c.kml
+2024-10-10 07:25:18,227 - INFO - Archivo KML actualizado con el polígono y guardado en: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_8dcf836c3d2643be8cc49ca07ea21c9c.kml
+2024-10-10 07:25:18,228 - INFO - Punto representativo del polígono: (-58.40947889488746, -34.62392763154078)
+2024-10-10 07:26:06,568 - INFO - Inicializando KMLHandler con archivo KML: cables.kml
+2024-10-10 07:26:06,569 - INFO - Archivo KML cables.kml cargado correctamente.
+2024-10-10 07:26:06,672 - INFO - Contenido del archivo KML procesado correctamente.
+2024-10-10 07:26:06,673 - INFO - Vamos a agregar el polígono al archivo: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_5e92be7881b248b7ae3cff8e9e8b1022.kml
+2024-10-10 07:26:06,720 - INFO - Archivo KML actualizado con el polígono y guardado en: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_5e92be7881b248b7ae3cff8e9e8b1022.kml
+2024-10-10 07:26:06,721 - INFO - Punto representativo del polígono: (-58.409264318166265, -34.62353916562534)
+2024-10-10 07:26:45,575 - INFO - Inicializando KMLHandler con archivo KML: cables.kml
+2024-10-10 07:26:45,576 - INFO - Archivo KML cables.kml cargado correctamente.
+2024-10-10 07:26:45,678 - INFO - Contenido del archivo KML procesado correctamente.
+2024-10-10 07:26:45,678 - INFO - Vamos a agregar el polígono al archivo: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_296836793ea647ee8c013ec092d02893.kml
+2024-10-10 07:26:45,722 - INFO - Archivo KML actualizado con el polígono y guardado en: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_296836793ea647ee8c013ec092d02893.kml
+2024-10-10 07:26:45,722 - INFO - Punto representativo del polígono: (-58.44296010019648, -34.62949369645684)
+2024-10-10 07:27:20,555 - INFO - Inicializando KMLHandler con archivo KML: cables.kml
+2024-10-10 07:27:20,556 - INFO - Archivo KML cables.kml cargado correctamente.
+2024-10-10 07:27:20,658 - INFO - Contenido del archivo KML procesado correctamente.
+2024-10-10 07:27:20,658 - INFO - Vamos a agregar el polígono al archivo: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_ed6841e0293b4279846133dabd847c45.kml
+2024-10-10 07:27:20,702 - INFO - Archivo KML actualizado con el polígono y guardado en: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_ed6841e0293b4279846133dabd847c45.kml
+2024-10-10 07:27:20,702 - INFO - Punto representativo del polígono: (-58.447294549964546, -34.62564448858373)
+2024-10-10 07:28:42,667 - INFO - Inicializando KMLHandler con archivo KML: cables.kml
+2024-10-10 07:28:42,668 - INFO - Archivo KML cables.kml cargado correctamente.
+2024-10-10 07:28:42,773 - INFO - Contenido del archivo KML procesado correctamente.
+2024-10-10 07:28:42,774 - INFO - Vamos a agregar el polígono al archivo: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_38c751ca3d2f4ea8a182804830529c87.kml
+2024-10-10 07:28:42,816 - INFO - Archivo KML actualizado con el polígono y guardado en: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_38c751ca3d2f4ea8a182804830529c87.kml
+2024-10-10 07:28:42,817 - INFO - Punto representativo del polígono: (-58.447400953175006, -34.625800300611964)
+2024-10-10 07:40:10,385 - INFO - Inicializando KMLHandler con archivo KML: cables.kml
+2024-10-10 07:40:10,386 - INFO - Archivo KML cables.kml cargado correctamente.
+2024-10-10 07:40:10,611 - INFO - Contenido del archivo KML procesado correctamente.
+2024-10-10 07:40:10,612 - INFO - Vamos a agregar el polígono al archivo: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_094fea8f913e479baed35c4d1260c49d.kml
+2024-10-10 07:40:10,702 - INFO - Archivo KML actualizado con el polígono y guardado en: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_094fea8f913e479baed35c4d1260c49d.kml
+2024-10-10 07:40:10,703 - INFO - Punto representativo del polígono: (-58.46136360317994, -34.61126378525732)
+2024-10-10 07:41:49,758 - INFO - Inicializando KMLHandler con archivo KML: cables.kml
+2024-10-10 07:41:49,759 - INFO - Archivo KML cables.kml cargado correctamente.
+2024-10-10 07:41:49,868 - INFO - Contenido del archivo KML procesado correctamente.
+2024-10-10 07:41:49,871 - INFO - Vamos a agregar el polígono al archivo: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_aca986aef120470783c1b054aa8e184e.kml
+2024-10-10 07:41:49,918 - INFO - Archivo KML actualizado con el polígono y guardado en: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_aca986aef120470783c1b054aa8e184e.kml
+2024-10-10 07:41:49,918 - INFO - Punto representativo del polígono: (84.9830065317688, 20.021667308251832)
+2024-10-10 07:42:38,211 - INFO - Inicializando KMLHandler con archivo KML: cables.kml
+2024-10-10 07:42:38,212 - INFO - Archivo KML cables.kml cargado correctamente.
+2024-10-10 07:42:38,318 - INFO - Contenido del archivo KML procesado correctamente.
+2024-10-10 07:42:38,318 - INFO - Vamos a agregar el polígono al archivo: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_27b79588b44b4e61b6d33702043d5562.kml
+2024-10-10 07:42:38,366 - INFO - Archivo KML actualizado con el polígono y guardado en: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_27b79588b44b4e61b6d33702043d5562.kml
+2024-10-10 07:42:38,367 - INFO - Punto representativo del polígono: (-46.81638952704365, -23.463984750242847)
+2024-10-10 09:14:21,181 - INFO - Inicializando KMLHandler con archivo KML: cables.kml
+2024-10-10 09:14:21,200 - INFO - Archivo KML cables.kml cargado correctamente.
+2024-10-10 09:14:21,307 - INFO - Contenido del archivo KML procesado correctamente.
+2024-10-10 09:14:21,307 - INFO - Vamos a agregar el polígono al archivo: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_59381266f7924d8ba44490284ce3a589.kml
+2024-10-10 09:14:21,352 - INFO - Archivo KML actualizado con el polígono y guardado en: D:\proyectos\rodrigo\is-intermap-back\maps\controllers\output\cable_polygon_59381266f7924d8ba44490284ce3a589.kml
+2024-10-10 09:14:21,353 - INFO - Punto representativo del polígono: (-58.466372973166536, -34.614995480566016)

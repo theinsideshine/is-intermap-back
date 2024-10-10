@@ -131,7 +131,7 @@ def get_interferences_paginated(page):
 # Endpoint para actualizar una interferencia
 @bp.route('/interferences/<int:interference_id>', methods=['PUT'])
 @jwt_required()  # Requiere un JWT para autenticar
-@roles_required('admin')  # Solo admin puede actualizar interferencias
+@roles_required('admin', 'user')   
 def update_interference(interference_id):
     try:
         # Crear una instancia del esquema y validar los datos recibidos
@@ -153,7 +153,7 @@ def update_interference(interference_id):
 # Endpoint para eliminar una interferencia
 @bp.route('/interferences/<int:interference_id>', methods=['DELETE'])
 @jwt_required()  # Requiere un JWT para autenticar
-@roles_required('admin')  # Solo admin puede eliminar interferencias
+@roles_required('admin', 'user')   
 def delete_interference(interference_id):
     try:
         success = interference_service.delete_interference(interference_id)

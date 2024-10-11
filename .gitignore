@@ -5,3 +5,4 @@ cable_polygon.kml
 __pycache__/
 *.pyc
 maps/output/
+database/is_intermap.db
